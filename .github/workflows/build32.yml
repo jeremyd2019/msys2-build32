@@ -15,6 +15,11 @@ on:
         required: true
         default: master
 
+env:
+  PACMAN_REPOSITORY_NAME: build32
+  DEPLOY_PROVIDER: tip
+  #PACMAN_REPOSITORY_URL: blah
+
 jobs:
   build32:
     runs-on: windows-latest
@@ -47,3 +52,16 @@ jobs:
         with:
           name: packages
           path: artifacts/
+  staging:
+    needs: [ build32 ]
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/download-artifact@v2
+
+    - uses: eine/tip@master
+      continue-on-error: true
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: 'repo'
+        files: artifact/*
