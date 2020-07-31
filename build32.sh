@@ -27,6 +27,6 @@ done
 
 # Deploy
 cd ../artifacts
-false && execute 'Generating pacman repository' create_pacman_repository "${PACMAN_REPOSITORY_NAME:-ci-build}" || execute 'Generating pacman repository' repo-add "${PACMAN_REPOSITORY_NAME:-ci-build}.db.tar.xz" *.pkg.tar.*
+execute 'Generating pacman repository' create_pacman_repository "${PACMAN_REPOSITORY_NAME:-ci-build}"
 execute 'SHA-256 checksums' sha256sum *
 success 'All artifacts built successfully'

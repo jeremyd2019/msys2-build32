@@ -18,7 +18,7 @@ on:
 env:
   PACMAN_REPOSITORY_NAME: build32
   DEPLOY_PROVIDER: tip
-  #PACMAN_REPOSITORY_URL: blah
+  PACMAN_REPOSITORY_URL: https://github.com/${{ github.repository }}/releases/download/repo
 
 jobs:
   build32:
@@ -64,4 +64,4 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: 'repo'
-        files: artifact/*
+        files: packages/*

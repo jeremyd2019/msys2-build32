@@ -96,9 +96,8 @@ _build_add() {
 # Download previous artifact
 _download_previous() {
     local filenames=("${@}")
-    [[ "${DEPLOY_PROVIDER}" = bintray ]] || return 1
     for filename in "${filenames[@]}"; do
-        if ! wget --no-verbose "https://dl.bintray.com/${BINTRAY_ACCOUNT}/${BINTRAY_REPOSITORY}/${filename}"; then
+        if ! wget --no-verbose "${PACMAN_REPOSITORY_URL}/${filename}"; then
             rm -f "${filenames[@]}"
             return 1
         fi
@@ -131,10 +130,8 @@ execute(){
 
 # Update system
 update_system() {
-    repman add ci.msys 'https://dl.bintray.com/alexpux/msys2' || return 1
+    repman add $PACMAN_REPOSITORY_NAME $PACMAN_REPOSITORY_URL || return 1
     pacman --noconfirm --noprogressbar --sync --refresh --refresh --sysupgrade --sysupgrade || return 1
-    test -n "${DISABLE_QUALITY_CHECK}" && return 0 # TODO: remove this option when not anymore needed
-    pacman --noconfirm --needed --noprogressbar --sync ci.msys/pactoys
 }
 
 # Sort packages by dependency
