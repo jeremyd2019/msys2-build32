@@ -1,0 +1,49 @@
+name: build32
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Packages to build (space-delimited)'
+        required: true
+      repository:
+        description: 'Repository to check out'
+        required: true
+        default: msys2/MSYS2-packages
+      ref:
+        description: 'Ref of repository to check out'
+        required: true
+        default: master
+
+jobs:
+  build32:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.inputs.repository }}
+          ref: ${{ github.event.inputs.ref }}
+          path: r
+
+      - uses: jeremyd2019/setup-msys2@v2_32
+        with:
+          msystem: MSYS
+          install: git base-devel msys2-devel
+          update: true
+          bitness: 32
+
+      - name: Build32
+        run: ./build32.sh ${{ github.event.inputs.packages }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: packages
+          path: artifacts/
