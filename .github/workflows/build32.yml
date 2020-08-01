@@ -14,6 +14,8 @@ on:
         description: 'Ref of repository to check out'
         required: true
         default: master
+      install_extras:
+        description: 'Extra packages to install'
 
 env:
   PACMAN_REPOSITORY_NAME: build32
@@ -42,7 +44,7 @@ jobs:
         uses: jeremyd2019/setup-msys2@v2_32
         with:
           msystem: MSYS
-          install: git base-devel msys2-devel python2
+          install: git base-devel msys2-devel ${{ github.event.inputs.install_extras }}
           update: true
           bitness: 32
 
