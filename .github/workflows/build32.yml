@@ -38,12 +38,25 @@ jobs:
           ref: ${{ github.event.inputs.ref }}
           path: r
 
-      - uses: jeremyd2019/setup-msys2@v2_32
+      - id: msys2
+        uses: jeremyd2019/setup-msys2@v2_32
         with:
           msystem: MSYS
           install: git base-devel msys2-devel
           update: true
           bitness: 32
+
+      - name: Update
+        run: ./update.sh
+
+      - name: Kill
+        shell: cmd
+        run: taskkill /F /FI "MODULES eq msys-2.0.dll"
+
+      - name: Auto-Rebase
+        shell: cmd
+        run: |
+          call "${{ steps.msys2.outputs.msysRootDir }}\autorebase.bat"
 
       - name: Build32
         run: ./build32.sh ${{ github.event.inputs.packages }}
