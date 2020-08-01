@@ -51,7 +51,8 @@ jobs:
 
       - name: Kill
         shell: cmd
-        run: taskkill /F /FI "MODULES eq msys-2.0.dll"
+        run: |
+          "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"
 
       - name: Auto-Rebase
         shell: cmd
