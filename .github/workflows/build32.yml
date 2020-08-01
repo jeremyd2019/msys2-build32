@@ -42,7 +42,7 @@ jobs:
         uses: jeremyd2019/setup-msys2@v2_32
         with:
           msystem: MSYS
-          install: git base-devel msys2-devel
+          install: git base-devel msys2-devel python2
           update: true
           bitness: 32
 
