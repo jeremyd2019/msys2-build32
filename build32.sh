@@ -13,7 +13,7 @@ define_build_order || failure 'Could not determine build order'
 
 # Build
 message 'Building packages' "${packages[@]}"
-false && execute 'Updating system' update_system
+execute 'Updating system' update_system
 execute 'Approving recipe quality' check_recipe_quality
 for package in "${packages[@]}"; do
     execute 'Building binary' makepkg --noconfirm --noprogressbar --skippgpcheck --nocheck --syncdeps --rmdeps --cleanbuild
