@@ -27,6 +27,10 @@ done
 
 # Deploy
 cd ../artifacts
+# work around github issue with ~ in file name (turns into .)
+for a in *~*; do
+    mv "$a" "`tr '~' '.' <<<"$a"`"
+done
 execute 'Generating pacman repository' create_pacman_repository "${PACMAN_REPOSITORY_NAME:-ci-build}"
 execute 'SHA-256 checksums' sha256sum *
 success 'All artifacts built successfully'
