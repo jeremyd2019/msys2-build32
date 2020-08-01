@@ -54,6 +54,9 @@ jobs:
         run: |
           "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"
 
+      - name: Update again
+        run: ./update.sh
+
       - name: Auto-Rebase
         shell: cmd
         run: |
