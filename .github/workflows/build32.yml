@@ -44,7 +44,7 @@ jobs:
         uses: jeremyd2019/setup-msys2@v2_32
         with:
           msystem: MSYS
-          install: git base-devel msys2-devel ${{ github.event.inputs.install_extras }}
+          install: git base-devel msys2-devel
           update: true
           bitness: 32
 
@@ -56,15 +56,29 @@ jobs:
         run: |
           "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"
 
-      - name: Update again
-        run: ./update.sh
+      - name: Install special
+        if: ${{ github.event.inputs.install_extras != '' }}
+        run: pacman --noconfirm --noprogressbar -S --needed --overwrite '*' ${{ github.event.inputs.install_extras }}
 
-      - name: Kill again
+      - name: Kill 2
         shell: cmd
         run: |
           "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"
 
-      - name: Auto-Rebase
+      - name: Auto-Rebase 1
+        shell: cmd
+        run: |
+          call "${{ steps.msys2.outputs.msysRootDir }}\autorebase.bat"
+
+      - name: Update again
+        run: ./update.sh
+
+      - name: Kill 3
+        shell: cmd
+        run: |
+          "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"
+
+      - name: Auto-Rebase 2
         shell: cmd
         run: |
           call "${{ steps.msys2.outputs.msysRootDir }}\autorebase.bat"
