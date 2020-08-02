@@ -81,6 +81,7 @@ jobs:
       - name: Auto-Rebase 2
         shell: cmd
         run: |
+          del "${{ steps.msys2.outputs.msysRootDir }}\etc\rebase.db.*"
           call "${{ steps.msys2.outputs.msysRootDir }}\autorebase.bat"
 
       - name: Build32
