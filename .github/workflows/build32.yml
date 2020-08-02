@@ -61,6 +61,7 @@ jobs:
         run: pacman --noconfirm --noprogressbar -S --needed --overwrite '*' ${{ github.event.inputs.install_extras }}
 
       - name: Kill 2
+        if: ${{ github.event.inputs.install_extras != '' }}
         shell: cmd
         run: |
           "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"

@@ -1,2 +1,3 @@
 msys2-runtime
 bash
+ansible
