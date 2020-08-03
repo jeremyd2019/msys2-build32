@@ -96,6 +96,7 @@ _build_add() {
 # Download previous artifact
 _download_previous() {
     local filenames=("${@}")
+    [[ "${DEPLOY_PROVIDER}" = tip ]] || return 1
     for filename in "${filenames[@]}"; do
         if ! wget --no-verbose "${PACMAN_REPOSITORY_URL}/${filename}"; then
             rm -f "${filenames[@]}"
