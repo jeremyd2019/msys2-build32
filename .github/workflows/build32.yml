@@ -17,14 +17,22 @@ on:
       install_extras:
         description: 'Extra packages to install'
       dont_upload:
-        description: 'Don''t upload artifacts to repo'
+        description: 'Don''t upload artifacts to release'
         required: false
         default: false
+      release_name:
+        description: 'Release/tag to upload to'
+        required: true
+        default: repo
+      repo_db_name:
+        description: 'Name of the pacman database'
+        required: true
+        default: build32
 
 env:
-  PACMAN_REPOSITORY_NAME: build32
+  PACMAN_REPOSITORY_NAME: ${{ github.event.inputs.repo_db_name }}
   DEPLOY_PROVIDER: tip
-  PACMAN_REPOSITORY_URL: https://github.com/${{ github.repository }}/releases/download/repo
+  PACMAN_REPOSITORY_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.release_name }}
 
 jobs:
   build32:
@@ -44,13 +52,17 @@ jobs:
           ref: ${{ github.event.inputs.ref }}
           path: r
 
-      - id: msys2
-        uses: jeremyd2019/setup-msys2@v2_build32
+      - uses: jeremyd2019/setup-msys2@v2_build32
         with:
           msystem: MSYS
           install: git base-devel msys2-devel ${{ github.event.inputs.install_extras }}
           update: true
           bitness: 32
+
+      - name: Get msys2 root
+        id: msys2
+        shell: powershell
+        run: Write-Output ('::set-output name=rootdir::{0}' -f (msys2 -c 'cygpath -w /'))
 
       - name: Build32
         run: ./build32.sh ${{ github.event.inputs.packages }}
@@ -71,5 +83,5 @@ jobs:
       continue-on-error: true
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag: 'repo'
+        tag: ${{ github.event.inputs.release_name }}
         files: packages/*
