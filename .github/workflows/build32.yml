@@ -87,14 +87,21 @@ jobs:
         run: |
           "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"
 
-      - name: Auto-Rebase 2
+      - name: Auto-Rebase 2 and subst
         shell: cmd
         run: |
           del "${{ steps.msys2.outputs.msysRootDir }}\etc\rebase.db.*"
           call "${{ steps.msys2.outputs.msysRootDir }}\autorebase.bat"
+          SUBST T: .
 
       - name: Build32
-        run: ./build32.sh ${{ github.event.inputs.packages }}
+        run: cd /t/ && ./build32.sh ${{ github.event.inputs.packages }}
+
+      - name: un-subst
+        if: ${{ always() }}
+        shell: cmd
+        run: |
+          SUBST T: /D
 
       - uses: actions/upload-artifact@v2
         with:
