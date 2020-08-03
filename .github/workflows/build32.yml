@@ -16,6 +16,10 @@ on:
         default: master
       install_extras:
         description: 'Extra packages to install'
+      dont_upload:
+        description: 'Don''t upload artifacts to repo'
+        required: false
+        default: false
 
 env:
   PACMAN_REPOSITORY_NAME: build32
@@ -41,49 +45,12 @@ jobs:
           path: r
 
       - id: msys2
-        uses: jeremyd2019/setup-msys2@v2_32
+        uses: jeremyd2019/setup-msys2@v2_build32
         with:
           msystem: MSYS
-          install: git base-devel msys2-devel
+          install: git base-devel msys2-devel ${{ github.event.inputs.install_extras }}
           update: true
           bitness: 32
-
-      - name: Update
-        run: ./update.sh
-
-      - name: Kill
-        shell: cmd
-        run: |
-          "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"
-
-      - name: Install special
-        if: ${{ github.event.inputs.install_extras != '' }}
-        run: pacman --noconfirm --noprogressbar -S --needed --overwrite '*' ${{ github.event.inputs.install_extras }}
-
-      - name: Kill 2
-        if: ${{ github.event.inputs.install_extras != '' }}
-        shell: cmd
-        run: |
-          "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"
-
-      - name: Auto-Rebase 1
-        shell: cmd
-        run: |
-          call "${{ steps.msys2.outputs.msysRootDir }}\autorebase.bat"
-
-      - name: Update again
-        run: ./update.sh
-
-      - name: Kill 3
-        shell: cmd
-        run: |
-          "%windir%\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -NoProfile -ExecutionPolicy Bypass -Command "Get-Process | Where-Object { $_.Modules.ModuleName -contains 'msys-2.0.dll' } | Stop-Process -Force"
-
-      - name: Auto-Rebase 2
-        shell: cmd
-        run: |
-          del "${{ steps.msys2.outputs.msysRootDir }}\etc\rebase.db.*"
-          call "${{ steps.msys2.outputs.msysRootDir }}\autorebase.bat"
 
       - name: Build32
         run: ./build32.sh ${{ github.event.inputs.packages }}
@@ -95,6 +62,7 @@ jobs:
   staging:
     needs: [ build32 ]
     runs-on: ubuntu-latest
+    if: ${{ ! github.event.inputs.dont_upload }}
     steps:
 
     - uses: actions/download-artifact@v2
