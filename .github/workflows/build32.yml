@@ -16,6 +16,10 @@ on:
         default: master
       install_extras:
         description: 'Extra packages to install'
+      dont_upload:
+        description: 'Don''t upload artifacts to repo'
+        required: false
+        default: false
 
 env:
   PACMAN_REPOSITORY_NAME: build32
@@ -99,6 +103,7 @@ jobs:
   staging:
     needs: [ build32 ]
     runs-on: ubuntu-latest
+    if: ${{ ! github.event.inputs.dont_upload }}
     steps:
 
     - uses: actions/download-artifact@v2
