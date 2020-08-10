@@ -59,13 +59,24 @@ jobs:
           update: true
           bitness: 32
 
-      - name: Get msys2 root
+      - name: Query MSYS2 root dir
         id: msys2
         shell: powershell
         run: Write-Output ('::set-output name=rootdir::{0}' -f (msys2 -c 'cygpath -w /'))
 
+      - name: subst
+        shell: cmd
+        run: |
+          SUBST T: .
+
       - name: Build32
-        run: ./build32.sh ${{ github.event.inputs.packages }}
+        run: cd /t/ && ./build32.sh ${{ github.event.inputs.packages }}
+
+      - name: un-subst
+        if: ${{ always() }}
+        shell: cmd
+        run: |
+          SUBST T: /D
 
       - uses: actions/upload-artifact@v2
         with:
