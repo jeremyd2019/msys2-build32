@@ -131,7 +131,10 @@ execute(){
 
 # Update system
 update_system() {
-    grep -F "[${PACMAN_REPOSITORY_NAME}]" /etc/pacman.conf || sed -i "/\[msys\]/i [${PACMAN_REPOSITORY_NAME}]\nServer = ${PACMAN_REPOSITORY_URL}\nSigLevel = Optional\n" /etc/pacman.conf
+    wget -qo /dev/null "${PACMAN_REPOSITORY_URL}/${PACMAN_REPOSITORY_NAME}.db"
+    if [ $? -ne 8 ]; then
+        grep -qF "[${PACMAN_REPOSITORY_NAME}]" /etc/pacman.conf || sed -i "/\[msys\]/i [${PACMAN_REPOSITORY_NAME}]\nServer = ${PACMAN_REPOSITORY_URL}\nSigLevel = Optional\n" /etc/pacman.conf
+    fi
     #repman add $PACMAN_REPOSITORY_NAME $PACMAN_REPOSITORY_URL || return 1
     pacman --noconfirm --noprogressbar --sync --refresh --refresh --sysupgrade --sysupgrade || return 1
 }

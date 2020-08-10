@@ -54,7 +54,7 @@ jobs:
       - name: Query MSYS2 root dir
         id: msys2
         shell: powershell
-        run: Write-Output ('::set-output name=msysRootDir::{0}' -f (msys2 -c 'cygpath -w /'))
+        run: Write-Output ('::set-output name=rootdir::{0}' -f (msys2 -c 'cygpath -w /'))
 
       - name: Update
         run: ./update.sh
@@ -77,7 +77,7 @@ jobs:
       - name: Auto-Rebase 1
         shell: cmd
         run: |
-          call "${{ steps.msys2.outputs.msysRootDir }}\autorebase.bat"
+          call "${{ steps.msys2.outputs.rootdir }}\autorebase.bat"
 
       - name: Update again
         run: ./update.sh
@@ -90,8 +90,8 @@ jobs:
       - name: Auto-Rebase 2 and subst
         shell: cmd
         run: |
-          del "${{ steps.msys2.outputs.msysRootDir }}\etc\rebase.db.*"
-          call "${{ steps.msys2.outputs.msysRootDir }}\autorebase.bat"
+          del "${{ steps.msys2.outputs.rootdir }}\etc\rebase.db.*"
+          call "${{ steps.msys2.outputs.rootdir }}\autorebase.bat"
           SUBST T: .
 
       - name: Build32
