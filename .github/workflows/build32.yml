@@ -52,12 +52,13 @@ jobs:
           ref: ${{ github.event.inputs.ref }}
           path: r
 
-      - uses: jeremyd2019/setup-msys2@v2_build32
+      - uses: jeremyd2019/setup-msys2@v2.0.1_build32dyn
         with:
           msystem: MSYS
           install: git base-devel msys2-devel ${{ github.event.inputs.install_extras }}
           update: true
           bitness: 32
+          dynamicbase: true
 
       - name: Query MSYS2 root dir
         id: msys2
