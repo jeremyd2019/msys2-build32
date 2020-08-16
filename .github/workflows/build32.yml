@@ -100,6 +100,7 @@ jobs:
       - name: un-subst
         if: ${{ always() }}
         shell: cmd
+        continue-on-error: true
         run: |
           SUBST T: /D
 
