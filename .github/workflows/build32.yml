@@ -57,6 +57,7 @@ jobs:
         run: Write-Output ('::set-output name=rootdir::{0}' -f (msys2 -c 'cygpath -w /'))
 
       - name: Update
+        continue-on-error: true
         run: ./update.sh
 
       - name: Kill
