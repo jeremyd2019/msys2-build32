@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd "$(dirname "$0")"
+DIR="$(pwd)"
 source 'ci-library.sh'
 cd r
 mkdir ../artifacts
@@ -17,6 +18,7 @@ message 'Building packages' "${packages[@]}"
 execute 'Updating system' update_system
 execute 'Approving recipe quality' check_recipe_quality
 for package in "${packages[@]}"; do
+    execute 'Fetch keys' "$DIR/fetch-validpgpkeys.sh"
     execute 'Building binary' makepkg --noconfirm --noprogressbar --nocheck --syncdeps --rmdeps --cleanbuild
     execute 'Building source' makepkg --noconfirm --noprogressbar --allsource
     grep -qFx "${package}" ../ci-dont-install-list.txt || execute 'Installing' yes:pacman --noprogressbar --noconfirm --upgrade *.pkg.tar.*
