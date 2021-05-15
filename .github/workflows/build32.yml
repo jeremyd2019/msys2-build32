@@ -64,6 +64,11 @@ jobs:
         shell: powershell
         run: Write-Output ('::set-output name=rootdir::{0}' -f (msys2 -c 'cygpath -w /'))
 
+      - name: Add build32 repo
+        continue-on-error: true
+        run: |
+          grep -qF "[build32]" /etc/pacman.conf || sed -i "/\[msys\]/i [build32]\nServer = https://github.com/${{ github.repository }}/releases/download/repo\nSigLevel = Optional\n" /etc/pacman.conf
+
       - name: Update
         continue-on-error: true
         run: ./update.sh
