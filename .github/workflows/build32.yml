@@ -33,6 +33,7 @@ env:
   PACMAN_REPOSITORY_NAME: ${{ github.event.inputs.repo_db_name }}
   DEPLOY_PROVIDER: tip
   PACMAN_REPOSITORY_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.release_name }}
+  MSYS: nonativeinnerlinks
 
 jobs:
   build32:
