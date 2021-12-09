@@ -132,9 +132,5 @@ jobs:
 
     - uses: actions/download-artifact@v2
 
-    - uses: eine/tip@master
-      continue-on-error: true
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ github.event.inputs.release_name }}
-        files: packages/*
+    - name: Upload to repo
+      run: gh release upload "${{ github.event.inputs.release_name }}" packages/* --clobber -R "${{ github.repository }}"
