@@ -125,6 +125,8 @@ jobs:
           name: packages
           path: artifacts/
   staging:
+    permissions:
+      contents: write
     needs: [ build32 ]
     runs-on: ubuntu-latest
     if: ${{ ! github.event.inputs.dont_upload }}
@@ -133,4 +135,6 @@ jobs:
     - uses: actions/download-artifact@v2
 
     - name: Upload to repo
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: gh release upload "${{ github.event.inputs.release_name }}" packages/* --clobber -R "${{ github.repository }}"
