@@ -45,10 +45,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{ github.event.inputs.repository }}
           ref: ${{ github.event.inputs.ref }}
@@ -121,7 +121,7 @@ jobs:
         run: |
           SUBST T: /D
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: packages
           path: artifacts/
@@ -133,7 +133,7 @@ jobs:
     if: ${{ ! github.event.inputs.dont_upload }}
     steps:
 
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
 
     - name: Upload to repo
       env:
