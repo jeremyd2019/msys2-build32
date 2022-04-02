@@ -18,6 +18,7 @@ on:
         description: 'Extra packages to install'
       dont_upload:
         description: 'Don''t upload artifacts to release'
+        type: boolean
         required: false
         default: false
       release_name:
