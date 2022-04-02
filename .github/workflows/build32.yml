@@ -20,7 +20,6 @@ on:
         description: 'Don''t upload artifacts to release'
         type: boolean
         required: false
-        default: false
       release_name:
         description: 'Release/tag to upload to'
         required: true
@@ -130,7 +129,7 @@ jobs:
       contents: write
     needs: [ build32 ]
     runs-on: ubuntu-latest
-    if: ${{ ! github.event.inputs.dont_upload }}
+    if: ${{ ! github.event.inputs.dont_upload || github.event.inputs.dont_upload == 'false' }}
     steps:
 
     - uses: actions/download-artifact@v3
