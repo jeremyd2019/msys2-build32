@@ -25,7 +25,7 @@ for package in "${packages[@]}"; do
     grep -qFx "${package}" ../ci-dont-install-list.txt || execute 'Installing' yes:pacman --noprogressbar --noconfirm --upgrade *.pkg.tar.*
     execute 'Checking dll depencencies' list_dll_deps ./pkg
     mv "${package}"/*.pkg.tar.* ../artifacts
-    mv "${package}"/*.src.tar.gz ../artifacts
+    mv "${package}"/*.src.tar.zst ../artifacts
     unset package
 done
 
