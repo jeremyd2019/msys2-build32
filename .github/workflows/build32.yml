@@ -63,7 +63,7 @@ jobs:
       - name: Query MSYS2 root dir
         id: msys2
         shell: powershell
-        run: Write-Output ('::set-output name=rootdir::{0}' -f (msys2 -c 'cygpath -w /'))
+        run: Write-Output ('rootdir={0}' -f (msys2 -c 'cygpath -w /')) >> $Env:GITHUB_OUTPUT
 
       - name: Add build32 repo
         if: ${{ github.event.inputs.release_name != 'repo' || github.event.inputs.repo_db_name != 'build32' }}
