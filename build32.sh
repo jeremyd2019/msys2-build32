@@ -11,7 +11,7 @@ git_config user.name  'MSYS2 Continuous Integration'
 packages=( "$@" )
 
 test -z "${packages}" && success 'No packages - no-op'
-pacman -Rnsc --noconfirm cocom
+pacman -Rnsc --noconfirm cocom automake1.{6,7,8,9,10}
 define_build_order || failure 'Could not determine build order'
 
 # Build
