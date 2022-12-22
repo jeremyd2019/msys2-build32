@@ -121,6 +121,7 @@ jobs:
           SUBST T: /D
 
       - uses: actions/upload-artifact@v3
+        if: ${{ always() }}
         with:
           name: packages
           path: artifacts/
