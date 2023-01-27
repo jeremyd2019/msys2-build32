@@ -11,6 +11,7 @@ git_config user.name  'MSYS2 Continuous Integration'
 packages=( "$@" )
 
 test -z "${packages}" && success 'No packages - no-op'
+pacman -Rnsc --noconfirm cocom automake1.{6,7,8,9,10}
 define_build_order || failure 'Could not determine build order'
 
 # Build
@@ -24,7 +25,7 @@ for package in "${packages[@]}"; do
     grep -qFx "${package}" ../ci-dont-install-list.txt || execute 'Installing' yes:pacman --noprogressbar --noconfirm --upgrade *.pkg.tar.*
     execute 'Checking dll depencencies' list_dll_deps ./pkg
     mv "${package}"/*.pkg.tar.* ../artifacts
-    mv "${package}"/*.src.tar.gz ../artifacts
+    mv "${package}"/*.src.tar.zst ../artifacts
     unset package
 done
 

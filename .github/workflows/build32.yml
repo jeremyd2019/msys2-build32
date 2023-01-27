@@ -18,8 +18,8 @@ on:
         description: 'Extra packages to install'
       dont_upload:
         description: 'Don''t upload artifacts to release'
+        type: boolean
         required: false
-        default: false
       release_name:
         description: 'Release/tag to upload to'
         required: true
@@ -33,6 +33,7 @@ env:
   PACMAN_REPOSITORY_NAME: ${{ github.event.inputs.repo_db_name }}
   DEPLOY_PROVIDER: tip
   PACMAN_REPOSITORY_URL: https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.release_name }}
+  MSYS: nonativeinnerlinks
 
 jobs:
   build32:
@@ -43,10 +44,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ${{ github.event.inputs.repository }}
           ref: ${{ github.event.inputs.ref }}
@@ -55,14 +56,14 @@ jobs:
       - uses: jeremyd2019/setup-msys2@v2_build32
         with:
           msystem: MSYS
-          install: git base-devel msys2-devel ${{ github.event.inputs.install_extras }}
+          install: git base-devel msys2-devel pactoys-git ${{ github.event.inputs.install_extras }}
           update: true
           bitness: 32
 
       - name: Query MSYS2 root dir
         id: msys2
         shell: powershell
-        run: Write-Output ('::set-output name=rootdir::{0}' -f (msys2 -c 'cygpath -w /'))
+        run: Write-Output ('rootdir={0}' -f (msys2 -c 'cygpath -w /')) >> $Env:GITHUB_OUTPUT
 
       - name: subst
         shell: cmd
@@ -79,21 +80,22 @@ jobs:
         run: |
           SUBST T: /D
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
+        if: ${{ always() }}
         with:
           name: packages
           path: artifacts/
   staging:
+    permissions:
+      contents: write
     needs: [ build32 ]
     runs-on: ubuntu-latest
-    if: ${{ ! github.event.inputs.dont_upload }}
+    if: ${{ ! github.event.inputs.dont_upload || github.event.inputs.dont_upload == 'false' }}
     steps:
 
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
 
-    - uses: eine/tip@master
-      continue-on-error: true
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ github.event.inputs.release_name }}
-        files: packages/*
+    - name: Upload to repo
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh release upload "${{ github.event.inputs.release_name }}" packages/* --clobber -R "${{ github.repository }}"
