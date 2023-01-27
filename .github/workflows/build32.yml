@@ -56,7 +56,7 @@ jobs:
       - uses: jeremyd2019/setup-msys2@v2_build32
         with:
           msystem: MSYS
-          install: git base-devel msys2-devel pactoys-git ${{ github.event.inputs.install_extras }}
+          install: git base-devel msys2-devel pactoys ${{ github.event.inputs.install_extras }}
           update: true
           bitness: 32
 
