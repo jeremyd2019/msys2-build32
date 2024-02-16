@@ -23,7 +23,7 @@ for package in "${packages[@]}"; do
     execute 'Building binary' makepkg --noconfirm --noprogressbar --nocheck --syncdeps --rmdeps --cleanbuild
     execute 'Building source' makepkg --noconfirm --noprogressbar --allsource
     grep -qFx "${package}" ../ci-dont-install-list.txt || execute 'Installing' yes:pacman --noprogressbar --noconfirm --upgrade *.pkg.tar.*
-    grep -qFx "${package}" ../ci-dont-install-list.txt || execute 'Checking dll depencencies' list_dll_deps ./pkg
+    execute 'Checking dll depencencies' list_dll_deps ./pkg
     mv "${package}"/*.pkg.tar.* ../artifacts
     mv "${package}"/*.src.tar.zst ../artifacts
     unset package
