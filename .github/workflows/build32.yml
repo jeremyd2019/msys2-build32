@@ -53,17 +53,13 @@ jobs:
           ref: ${{ github.event.inputs.ref }}
           path: r
 
-      - uses: jeremyd2019/setup-msys2@v2_build32
+      - id: msys2
+        uses: jeremyd2019/setup-msys2@v2_build32
         with:
           msystem: MSYS
           install: git base-devel msys2-devel pactoys ${{ github.event.inputs.install_extras }}
           update: true
           bitness: 32
-
-      - name: Query MSYS2 root dir
-        id: msys2
-        shell: powershell
-        run: Write-Output ('rootdir={0}' -f (msys2 -c 'cygpath -w /')) >> $Env:GITHUB_OUTPUT
 
       - name: subst
         shell: cmd
