@@ -43,6 +43,15 @@ jobs:
         shell: msys2 {0}
 
     steps:
+      - name: Configure Pagefile
+        # https://github.com/al-cheb/configure-pagefile-action/issues/16
+        continue-on-error: true
+        uses: al-cheb/configure-pagefile-action@v1.4
+        with:
+          minimum-size: 4GB
+          maximum-size: 16GB
+          disk-root: "C:"
+
       - name: Checkout
         uses: actions/checkout@v4
 
