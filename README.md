@@ -1,4 +1,4 @@
-This repository publishes updates i686 msys2 packages that are no longer built upstream.  These are only relevant for i686 msys2 installs, and chances are you don't really need these. 
+This repository publishes updated i686 msys2 packages, which are no longer built upstream.  These are only relevant for i686 msys2 installs, and chances are you don't really need these. 
 
 If you are *really* sure you need i686 msys2, add the following *before* `[msys]` in your msys32's `/etc/pacman.conf`:
 
