@@ -1,0 +1,66 @@
+name: build32
+
+on:
+  workflow_dispatch:
+
+jobs:
+  staging:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pacdb
+        uses: actions/checkout@v4
+        with:
+          repository: msys2/pacdb
+          path: pacdb
+      - name: pacdb prep
+        run: |
+          pip install zstandard
+          cd pacdb
+          patch -p1 <<'END'
+          diff --git a/examples/pacmirror.py b/examples/pacmirror.py
+          index fa3f798..90ce6b6 100644
+          --- a/examples/pacmirror.py
+          +++ b/examples/pacmirror.py
+          @@ -17,7 +17,8 @@ parser.add_argument('dir', help='destination dir')
+          
+           options = parser.parse_args()
+          
+          -db = pacdb.Database.from_url(options.repo, options.url)
+          +db = pacdb.Database(options.repo, os.path.join(options.dir, options.repo + ".db"))
+          +db.url = options.url
+          
+          
+           def fetch_file(url, filename, expected_size=None):
+          @@ -40,11 +41,11 @@ for t in (".db", ".files"):
+               files.add(options.repo + t)
+               url = "{}/{}".format(db.url, options.repo + t)
+               filename = os.path.join(options.dir, options.repo + t)
+          -    fetch_file(url, filename, -1)
+          +    #fetch_file(url, filename, -1)
+               try:
+                   url+=".sig"
+                   filename+=".sig"
+          -        fetch_file(url, filename, -1)
+          +        #fetch_file(url, filename, -1)
+                   files.add(options.repo + t + ".sig")
+               except HTTPError as e:
+                   if options.verbose:
+          END
+      - name: fetch new files
+        run: |
+          mkdir build32
+          gh release download -R "${{ github.repository }}" -D build32 temprepo
+      - name: mirror old files
+        run: |
+          cd pacdb
+          python examples/pacmirror.py -e build32 -v https://github.com/jeremyd2019/msys2-build32/releases/download/repo ../build32
+      - name: fetch new files again (mirror deleted them)
+        run: |
+          mkdir build32
+          gh release download -R "${{ github.repository }}" -D build32 temprepo --clobber
+      - name: Upload to repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "newrepo" build32/* --clobber -R "${{ github.repository }}"
