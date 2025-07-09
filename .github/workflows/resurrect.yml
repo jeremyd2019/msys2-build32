@@ -52,6 +52,8 @@ jobs:
         run: |
           mkdir build32
           gh release download -R "${{ github.repository }}" -D build32 temprepo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: mirror old files
         run: |
           cd pacdb
@@ -60,6 +62,8 @@ jobs:
         run: |
           mkdir build32
           gh release download -R "${{ github.repository }}" -D build32 temprepo --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload to repo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
