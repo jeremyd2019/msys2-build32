@@ -57,7 +57,7 @@ jobs:
       - name: mirror old files
         run: |
           cd pacdb
-          python examples/pacmirror.py -e build32 -v https://github.com/jeremyd2019/msys2-build32/releases/download/repo ../build32
+          PYTHONPATH=. python examples/pacmirror.py -e build32 -v https://github.com/jeremyd2019/msys2-build32/releases/download/repo ../build32
       - name: fetch new files again (mirror deleted them)
         run: |
           mkdir build32
