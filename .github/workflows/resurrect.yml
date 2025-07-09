@@ -1,4 +1,4 @@
-name: build32
+name: resurrect
 
 on:
   workflow_dispatch:
