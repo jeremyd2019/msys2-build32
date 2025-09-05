@@ -9,7 +9,7 @@ git_config user.email 'ci@msys2.org'
 git_config user.name  'MSYS2 Continuous Integration'
 [ ! -e ~/.gnupg/gpg.conf ] && mkdir -p ~/.gnupg && echo -e "keyserver keyserver.ubuntu.com\nkeyserver-options auto-key-retrieve" > ~/.gnupg/gpg.conf
 mkdir -p /etc/makepkg.conf.d
-echo "COMPRESSZST=(zstd -c -T0 --ultra -22 -)" > /etc/makepkg.conf.d/zstdopts.conf
+echo "COMPRESSZST=(zstd -c -T0 --ultra -20 -)" > /etc/makepkg.conf.d/zstdopts.conf
 packages=( "$@" )
 
 test -z "${packages}" && success 'No packages - no-op'
